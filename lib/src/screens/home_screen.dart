@@ -176,14 +176,29 @@ class _HomeScreenState extends State<HomeScreen> {
               if (_minifiedCode.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
-                  onPressed: _downloadFile,
-                  icon: const Icon(Icons.download), // Download icon
-                  label: const Text('Download Minified File'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.grey, // Secondary color for the button
-                  ),
-                ),
+  onPressed: _downloadFile,
+  icon: const Icon(
+    Icons.download,
+    color: Colors.white, // Set icon color to white
+  ),
+  label: const Text(
+    'Download Minified File',
+    style: TextStyle(
+      color: Colors.white, // Set text color to white
+      fontSize: 16, // Font size of 16px
+    ),
+  ),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.blue, // Blue background color
+    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0), // Increased padding for less rounded corners
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8), // Border radius of 8-10px
+    ),
+  ),
+)
+
+
+
               ],
             ],
           ),

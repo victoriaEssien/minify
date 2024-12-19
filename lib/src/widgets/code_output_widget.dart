@@ -33,7 +33,18 @@ class CodeOutputWidget extends StatelessWidget {
             },
             icon: const Icon(Icons.copy),
             label: const Text('Copy to Clipboard'),
-          ),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                  horizontal:
+                      16.0), // Adjusted padding for less rounded corners
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(8), // Set the border radius to 8-10px
+              ),
+              textStyle: const TextStyle(fontSize: 16), // Adjust text size
+            ),
+          )
         ],
       ],
     );
