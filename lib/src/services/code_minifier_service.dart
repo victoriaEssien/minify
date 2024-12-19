@@ -20,7 +20,7 @@ class CodeMinifierService {
     
     // 6. Shorten variable names (e.g., myVar -> a)
     // Improved regex to match other types of variable declarations
-    code = code.replaceAllMapped(RegExp(r'\b(var|final|int|String|double|bool)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b'), (match) {
+    code = code.replaceAllMapped(RegExp(r'\b(var|final|int|String|double|bool|const)\s+([a-zA-Z_][a-zA-Z0-9_]*)\b'), (match) {
       var originalName = match.group(2);  // Capture the variable name
       return '${match.group(1)} ${_getShortenedName()}';  // Use shortened name
     });
