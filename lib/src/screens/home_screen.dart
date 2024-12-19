@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async'; // For using Future.delayed
 import 'dart:convert'; // For encoding and decoding
 import 'dart:typed_data'; // For working with byte data
+import 'package:flutter/services.dart'; // For Clipboard functionality
+import 'package:file_picker/file_picker.dart'; // For file picker
 import 'dart:html' as html; // Correct import for Flutter Web file downloads
 import '../widgets/code_input_widget.dart';
 import '../widgets/code_output_widget.dart';
@@ -36,25 +38,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // Function to upload a file using the html package for Flutter Web
+  // Function to upload a file
   Future<void> _uploadFile() async {
-    // Create an input element to trigger file selection
-    final html.FileUploadInputElement input = html.FileUploadInputElement()
-      ..click();
+    // Pick the file
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    input.onChange.listen((e) async {
-      final files = input.files;
-      if (files!.isEmpty) return;
+    if (result != null) {
+      final fileBytes = result.files.single.bytes;
+      final fileName = result.files.single.name;
 
-      final file = files[0];
-      final reader = html.FileReader();
-      reader.readAsText(file);
+      setState(() {
+        _fileName = fileName;
+      });
 
-      reader.onLoadEnd.listen((e) async {
-        final fileContent = reader.result as String;
+      if (fileBytes != null) {
+        String fileContent = utf8.decode(fileBytes);
 
         setState(() {
-          _fileName = file.name;
           _isLoading = true;
         });
 
@@ -67,8 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isLoading = false;
         });
-      });
-    });
+      }
+    }
   }
 
   // Function to download the minified file
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Code Minifier'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(300.0, 24.0, 300.0, 24.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -102,11 +102,62 @@ class _HomeScreenState extends State<HomeScreen> {
               CodeInputWidget(controller: _inputController),
               const SizedBox(height: 16),
 
+              // Button to trigger minification (Primary style)
+              ElevatedButton(
+                onPressed: _isLoading ? null : _minifyCode,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue, // Primary color for the button
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0,
+                      horizontal: 16.0), // Increased vertical padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        8.0), // Slightly rounded corners (8px)
+                  ),
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text(
+                        'Minify Code',
+                        style: TextStyle(
+                          color: Colors.white, // White text color
+                          fontSize: 16, // Font size of 16px
+                        ),
+                      ),
+              ),
+
+              const SizedBox(height: 16),
+
               // Button for file upload
               ElevatedButton(
                 onPressed: _isLoading ? null : _uploadFile,
-                child: const Text('Upload File'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white, // White background color
+                  side: BorderSide(color: Colors.blue, width: 1), // Blue border
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0,
+                      horizontal: 16.0), // Increased vertical padding
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        8.0), // Slightly rounded corners (8px)
+                  ),
+                ),
+                child: Text(
+                  'Upload File',
+                  style: TextStyle(
+                    color: Colors.blue, // Blue text color
+                    fontSize: 16, // Font size of 16px
+                  ),
+                ),
               ),
+
               const SizedBox(height: 16),
 
               // Display the uploaded file name
@@ -118,31 +169,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Button to trigger minification
-              ElevatedButton(
-                onPressed: _isLoading ? null : _minifyCode,
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.0,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('Minify Code'),
-              ),
-              const SizedBox(height: 16),
-
               // Output of the minified code
               CodeOutputWidget(output: _minifiedCode),
 
-              // Button to download the minified file
+              // Button to download the minified file (Secondary style with icon)
               if (_minifiedCode.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: _downloadFile,
-                  child: const Text('Download Minified File'),
+                  icon: const Icon(Icons.download), // Download icon
+                  label: const Text('Download Minified File'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.grey, // Secondary color for the button
+                  ),
                 ),
               ],
             ],
