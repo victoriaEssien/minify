@@ -75,3 +75,6 @@ https://github.com/user-attachments/assets/f8f2e49e-c14e-4c62-abe2-a97112b63c64
 1. **Paste or Upload Your Code**: Insert your raw code into the text area or upload the code file.  
 2. **Minify**: Click on the **Minify Code** button to remove unwanted elements.  
 3. **Copy or Download**: Copy the optimized code to your clipboard or download it as a file.
+
+### Discord handle
+- vic_essien
